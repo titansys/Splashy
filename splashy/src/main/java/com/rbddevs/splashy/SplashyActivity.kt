@@ -148,8 +148,6 @@ internal class SplashyActivity : AppCompatActivity() {
             getDrawable(applicationInfo.icon)
         }
 
-        val borderRadius = 100f // Set the desired border radius here
-
         if (logoDrawable != null) {
             val bitmap = (logoDrawable as BitmapDrawable).bitmap
             val shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
@@ -160,6 +158,9 @@ internal class SplashyActivity : AppCompatActivity() {
             val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
             val canvas = Canvas(output)
             val rect = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+
+            val minDimension = min(bitmap.width, bitmap.height)
+            val borderRadius = minDimension / 2f
 
             canvas.drawRoundRect(rect, borderRadius, borderRadius, paint)
             ivLogo.setImageBitmap(output)
