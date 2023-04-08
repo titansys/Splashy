@@ -148,7 +148,7 @@ internal class SplashyActivity : AppCompatActivity() {
             getDrawable(applicationInfo.icon)
         }
 
-        val borderRadius = 50f // Set the desired border radius here
+        val borderRadius = 100f // Set the desired border radius here
 
         if (logoDrawable != null) {
             val bitmap = (logoDrawable as BitmapDrawable).bitmap
