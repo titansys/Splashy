@@ -12,6 +12,10 @@ class Splashy(private var activity: Activity) {
 
 
 //    *************************************** Splash Screen Time *********************************************************
+    fun setLogoRoundedBorders(borderRadius: Float): Splashy {
+        intent.putExtra(LOGO_BORDER_RADIUS, borderRadius)
+        return this
+    }
 
     /**
      * @param time The long value  to set Time of Splash Screen in Millis
@@ -359,7 +363,8 @@ class Splashy(private var activity: Activity) {
     }
 
     companion object {
-
+        
+        const val LOGO_BORDER_RADIUS = "logo_border_radius"
 
         /**
          * @param getComplete The interface value to listen when splash screen time ends

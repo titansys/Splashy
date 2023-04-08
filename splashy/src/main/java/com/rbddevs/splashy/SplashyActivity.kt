@@ -94,6 +94,28 @@ internal class SplashyActivity : AppCompatActivity() {
 
     }
 
+    private fun setRoundedLogoBorders() {
+        if (intent.hasExtra(LOGO_BORDER_RADIUS)) {
+            val borderRadius = intent.getFloatExtra(LOGO_BORDER_RADIUS, 0f)
+            val logoDrawable = ivLogo.drawable
+            val gradientDrawable = GradientDrawable()
+            gradientDrawable.cornerRadius = borderRadius
+            gradientDrawable.setColor(Color.TRANSPARENT)
+
+            if (logoDrawable != null) {
+                gradientDrawable.setShape(GradientDrawable.RECTANGLE)
+                gradientDrawable.gradientType = GradientDrawable.BITMAP
+
+                val layers = arrayOf(logoDrawable, gradientDrawable)
+                val layerDrawable = LayerDrawable(layers)
+
+                ivLogo.setImageDrawable(layerDrawable)
+            } else {
+                ivLogo.setImageDrawable(gradientDrawable)
+            }
+        }
+    }
+
     var progressVisible = false
 
 
@@ -113,6 +135,8 @@ internal class SplashyActivity : AppCompatActivity() {
         setProgress()
 
         setSplashBackground()
+
+        setRoundedLogoBorders()
 
         setFullScreen()
 
