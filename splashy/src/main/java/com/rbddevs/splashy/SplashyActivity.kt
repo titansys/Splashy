@@ -4,6 +4,13 @@ import android.content.pm.ApplicationInfo
 import android.graphics.Color
 import android.graphics.PorterDuff
 import android.graphics.Typeface
+import android.graphics.Bitmap
+import android.graphics.BitmapShader
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.RectF
+import android.graphics.Shader
+import android.graphics.drawable.BitmapDrawable
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
@@ -15,10 +22,6 @@ import android.view.WindowManager
 import android.view.animation.*
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_splashy.*
-import android.graphics.drawable.GradientDrawable
-import android.graphics.drawable.LayerDrawable
-import com.rbddevs.splashy.Splashy.Companion.LOGO_BORDER_RADIUS
-
 
 internal class SplashyActivity : AppCompatActivity() {
 
@@ -97,28 +100,6 @@ internal class SplashyActivity : AppCompatActivity() {
 
     }
 
-    private fun setRoundedLogoBorders() {
-        if (intent.hasExtra(LOGO_BORDER_RADIUS)) {
-            val borderRadius = intent.getFloatExtra(LOGO_BORDER_RADIUS, 0f)
-            val logoDrawable = ivLogo.drawable
-            val gradientDrawable = GradientDrawable()
-            gradientDrawable.cornerRadius = borderRadius
-            gradientDrawable.setColor(Color.TRANSPARENT)
-
-            if (logoDrawable != null) {
-                gradientDrawable.setShape(GradientDrawable.RECTANGLE)
-                gradientDrawable.gradientType = GradientDrawable.BITMAP
-
-                val layers = arrayOf(logoDrawable, gradientDrawable)
-                val layerDrawable = LayerDrawable(layers)
-
-                ivLogo.setImageDrawable(layerDrawable)
-            } else {
-                ivLogo.setImageDrawable(gradientDrawable)
-            }
-        }
-    }
-
     var progressVisible = false
 
 
@@ -138,8 +119,6 @@ internal class SplashyActivity : AppCompatActivity() {
         setProgress()
 
         setSplashBackground()
-
-        setRoundedLogoBorders()
 
         setFullScreen()
 
@@ -163,12 +142,27 @@ internal class SplashyActivity : AppCompatActivity() {
             if (!intent.getBooleanExtra(SHOW_LOGO, true)) ivLogo.visibility = View.GONE
         }
 
-
-        if (intent.hasExtra(LOGO)) {
-            ivLogo.setImageResource(intent.getIntExtra(LOGO, applicationInfo.icon))
+        val logoDrawable = if (intent.hasExtra(LOGO)) {
+            getDrawable(intent.getIntExtra(LOGO, applicationInfo.icon))
         } else {
-            ivLogo.setImageResource(applicationInfo.icon)
+            getDrawable(applicationInfo.icon)
+        }
 
+        val borderRadius = 50f // Set the desired border radius here
+
+        if (logoDrawable != null) {
+            val bitmap = (logoDrawable as BitmapDrawable).bitmap
+            val shader = BitmapShader(bitmap, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP)
+            val paint = Paint()
+            paint.isAntiAlias = true
+            paint.shader = shader
+
+            val output = Bitmap.createBitmap(bitmap.width, bitmap.height, Bitmap.Config.ARGB_8888)
+            val canvas = Canvas(output)
+            val rect = RectF(0f, 0f, bitmap.width.toFloat(), bitmap.height.toFloat())
+
+            canvas.drawRoundRect(rect, borderRadius, borderRadius, paint)
+            ivLogo.setImageBitmap(output)
         }
 
         if (intent.hasExtra(LOGO_WIDTH) || intent.hasExtra(LOGO_HEIGHT)) {
@@ -191,8 +185,6 @@ internal class SplashyActivity : AppCompatActivity() {
             ivLogo.layoutParams.width = widthInDp
             ivLogo.layoutParams.height = heightInDp
             ivLogo.requestLayout()
-
-
         }
 
         if (intent.hasExtra(LOGO_SCALE_TYPE)) {
