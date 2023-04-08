@@ -15,6 +15,9 @@ import android.view.WindowManager
 import android.view.animation.*
 import android.widget.ImageView
 import kotlinx.android.synthetic.main.activity_splashy.*
+import android.graphics.drawable.GradientDrawable
+import android.graphics.drawable.LayerDrawable
+import com.rbddevs.splashy.Splashy.Companion.LOGO_BORDER_RADIUS
 
 
 internal class SplashyActivity : AppCompatActivity() {
